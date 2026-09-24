@@ -14,7 +14,9 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:5300',
+        // Default: локалниот API (5300). start-dev.ps1 режимот „FE → прод" го
+        // насочува кон https://116.202.8.155.sslip.io преку VITE_PROXY_TARGET.
+        target: process.env.VITE_PROXY_TARGET || 'http://localhost:5300',
         changeOrigin: true,
       },
     },

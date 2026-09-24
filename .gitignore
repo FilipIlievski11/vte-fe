@@ -111,3 +111,7 @@ TestResults/
 
 # build artifacts
 deploy/out/
+
+# компајлирани близнаци на vite.config.ts (ги чита Vite пред .ts!)
+frontend-v2/vite.config.js
+frontend-v2/vite.config.d.ts
