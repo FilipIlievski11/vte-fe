@@ -1,5 +1,0 @@
-<Solution>
-  <Project Path="src/VTE.Domain/VTE.Domain.csproj" />
-  <Project Path="src/VTE.Infrastructure/VTE.Infrastructure.csproj" />
-  <Project Path="src/VTE.Api/VTE.Api.csproj" />
-</Solution>
