@@ -157,3 +157,19 @@ export async function printDailyClosure(folder: FileSystemDirectoryHandle): Prom
 export async function printControlReport(folder: FileSystemDirectoryHandle): Promise<void> {
   await writeFiscalFile(folder, 'DnevenKontrolenIzvestaj.txt', ascii(' E2\r\n'));
 }
+
+/** Тест-фискална сметка: една ставка „Proba" од 1.00 ден. (ДДВ А 18%) — печати
+ *  ВИСТИНСКА сметка на уредот, за проверка дека печатачот е жив. Ист бајт-формат
+ *  како серверскиот composer: header → '1 + име + таб + ДДВ-бајт 192 + износ →
+ *  subtotal → затворање (%8). Уникатно име за да може да се повтори пробата. */
+export async function printTestReceipt(folder: FileSystemDirectoryHandle): Promise<string> {
+  const head = ascii(" 01,0000,1\r\n'1Proba\t");
+  const tail = ascii("1.00\r\n 5 Smetka\t\r\n%8\r\n");
+  const bytes = new Uint8Array(head.length + 1 + tail.length);
+  bytes.set(head, 0);
+  bytes[head.length] = 192;                       // ДДВ класа А (18%), CP1251
+  bytes.set(tail, head.length + 1);
+  const fileName = `TestSmetka${Date.now()}.txt`;
+  await writeFiscalFile(folder, fileName, bytes);
+  return fileName;
+}

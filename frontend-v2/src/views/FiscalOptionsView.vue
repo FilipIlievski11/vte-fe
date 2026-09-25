@@ -7,7 +7,7 @@ import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
 import {
   isFiscalSupported, getSavedFolder, pickFiscalFolder, clearFiscalFolder,
-  ensureFolder, writeFiscalFile, printDailyClosure, printControlReport,
+  ensureFolder, writeFiscalFile, printDailyClosure, printControlReport, printTestReceipt,
 } from '@/fiscal/fiscal';
 
 const { t } = useI18n();
@@ -60,6 +60,18 @@ function testWrite() {
   }, t('fiscal.testOk'));
 }
 
+// Тест-фискална од 1 денар — ВИСТИНСКА сметка на уредот, со потврда пред печат.
+function testReceipt() {
+  confirm.require({
+    message: t('fiscal.testReceiptConfirm'),
+    header: t('fiscal.testReceiptTitle'),
+    icon: 'pi pi-print',
+    rejectProps: { label: t('common.cancel'), severity: 'secondary', outlined: true },
+    acceptProps: { label: t('fiscal.testReceiptTitle') },
+    accept: () => withFolder(async f => { await printTestReceipt(f); }, t('fiscal.testReceiptSent')),
+  });
+}
+
 function zClosure() {
   confirm.require({
     message: t('fiscal.zConfirm'),
@@ -108,8 +120,12 @@ onMounted(refreshStatus);
         <Button v-if="folderName" :label="t('fiscal.forget')" icon="pi pi-times" size="small"
           severity="secondary" outlined @click="forgetFolder" />
       </div>
-      <Button :label="t('fiscal.testWrite')" icon="pi pi-bolt" size="small" outlined
-        class="test-btn" :loading="busy" :disabled="!folderName" @click="testWrite" />
+      <div class="test-row">
+        <Button :label="t('fiscal.testWrite')" icon="pi pi-bolt" size="small" outlined
+          :loading="busy" :disabled="!folderName" @click="testWrite" />
+        <Button :label="t('fiscal.testReceipt')" icon="pi pi-print" size="small" severity="warn" outlined
+          :loading="busy" :disabled="!folderName" @click="testReceipt" />
+      </div>
     </div>
 
     <div class="fiscal-card">
@@ -139,6 +155,6 @@ onMounted(refreshStatus);
 .muted { color: var(--p-text-muted-color) }
 .folder-row { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap }
 .folder-row .spacer { flex: 1 }
-.test-btn { margin-top: .8rem }
+.test-row { margin-top: .8rem; display: flex; gap: .6rem; flex-wrap: wrap }
 .report-row { display: flex; gap: .6rem }
 </style>
